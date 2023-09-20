@@ -40,11 +40,16 @@ export const loginController = async (req, res, next) => {
 
     const { password, isAdmin, ...otherDetails } = user._doc;
 
-    res.status(200).json({
-      success: true,
-      message: "User created successfully!",
-      ...otherDetails,
-    });
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "User logged in successfully!",
+        ...otherDetails,
+      });
   } catch (error) {
     next(error);
   }
