@@ -12,13 +12,14 @@ export const createHotel = async (req, res, next) => {
     next(err);
   }
 };
+
 // update Hotel
 export const updateHotel = async (req, res, next) => {
-  const hotelID = req.params.id;
+  const hotelId = req.params.id;
 
   try {
     const updatedHotel = await Hotel.findByIdAndUpdate(
-      hotelID,
+      hotelId,
       {
         $set: req.body,
       },
@@ -31,12 +32,13 @@ export const updateHotel = async (req, res, next) => {
     res.status(500).json(error);
   }
 };
+
 // delete Hotel
 export const deleteHotel = async (req, res, next) => {
-  const hotelID = req.params.id;
+  const hotelId = req.params.id;
 
   try {
-    await Hotel.findByIdAndDelete(hotelID);
+    await Hotel.findByIdAndDelete(hotelId);
     res
       .status(200)
       .json({ success: true, message: "Hotel data successfully deleted!" });
@@ -44,12 +46,13 @@ export const deleteHotel = async (req, res, next) => {
     res.status(500).json(error);
   }
 };
+
 // get single Hotel
 export const getHotel = async (req, res, next) => {
-  const hotelID = req.params.id;
+  const hotelId = req.params.id;
 
   try {
-    const findHotel = await Hotel.findById(hotelID);
+    const findHotel = await Hotel.findById(hotelId);
     res.status(200).json({
       success: true,
       message: "Hotel data get successfully",
@@ -59,6 +62,7 @@ export const getHotel = async (req, res, next) => {
     res.status(500).json(error);
   }
 };
+
 // get all Hotels
 export const getAllHotels = async (req, res, next) => {
   try {
