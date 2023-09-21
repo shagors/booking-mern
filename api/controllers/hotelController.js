@@ -1,4 +1,5 @@
 import Hotel from "../models/Hotel.js";
+import Room from "../models/Room.js";
 
 // create Hotel
 export const createHotel = async (req, res, next) => {
@@ -68,14 +69,16 @@ export const getHotel = async (req, res, next) => {
 // get all Hotels
 export const getAllHotels = async (req, res, next) => {
   try {
-    const hotels = await Hotel.find();
-    res.status(200).json({
-      success: true,
-      message: "All Hotel data get successfully",
-      hotels,
-    });
-  } catch (error) {
-    next(error);
+    const { min, max, ...others } = req.query;
+    const limit = Number(req.query.limit) || 1;
+
+    const hotels = await Hotel.find({ featured: req.query.featured }).limit(
+      limit
+    );
+    res.status(200).json(hotels);
+    console.log(hotels);
+  } catch (err) {
+    next(err);
   }
 };
 
