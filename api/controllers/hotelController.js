@@ -88,11 +88,7 @@ export const countByCity = async (req, res, next) => {
         return Hotel.countDocuments({ city: city });
       })
     );
-    res.status(200).json({
-      success: true,
-      message: "Search Hotel data get successfully",
-      list,
-    });
+    res.status(200).json(list);
   } catch (error) {
     next(error);
   }
