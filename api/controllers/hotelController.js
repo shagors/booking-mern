@@ -1,102 +1,70 @@
 import Hotel from "../models/Hotel.js";
 import Room from "../models/Room.js";
 
-// create Hotel
 export const createHotel = async (req, res, next) => {
   const newHotel = new Hotel(req.body);
+
   try {
     const savedHotel = await newHotel.save();
-    res.status(200).json({
-      success: true,
-      message: "Hotel data successfully uploaded!",
-      savedHotel,
-    });
+    res.status(200).json(savedHotel);
   } catch (err) {
     next(err);
   }
 };
-
-// update Hotel
 export const updateHotel = async (req, res, next) => {
-  const hotelId = req.params.id;
-
   try {
     const updatedHotel = await Hotel.findByIdAndUpdate(
-      hotelId,
-      {
-        $set: req.body,
-      },
+      req.params.id,
+      { $set: req.body },
       { new: true }
     );
-    res
-      .status(200)
-      .json({ success: true, message: "Hotel data successfully updated!" });
-  } catch (error) {
-    res.status(500).json(error);
+    res.status(200).json(updatedHotel);
+  } catch (err) {
+    next(err);
   }
 };
-
-// delete Hotel
 export const deleteHotel = async (req, res, next) => {
-  const hotelId = req.params.id;
-
   try {
-    await Hotel.findByIdAndDelete(hotelId);
-    res
-      .status(200)
-      .json({ success: true, message: "Hotel data successfully deleted!" });
-  } catch (error) {
-    res.status(500).json(error);
+    await Hotel.findByIdAndDelete(req.params.id);
+    res.status(200).json("Hotel has been deleted.");
+  } catch (err) {
+    next(err);
   }
 };
-
-// get single Hotel
 export const getHotel = async (req, res, next) => {
-  const hotelId = req.params.id;
-
   try {
-    const findHotel = await Hotel.findById(hotelId);
-    res.status(200).json({
-      success: true,
-      message: "Hotel data get successfully",
-      findHotel,
-    });
-  } catch (error) {
-    res.status(500).json(error);
+    const hotel = await Hotel.findById(req.params.id);
+    res.status(200).json(hotel);
+  } catch (err) {
+    next(err);
   }
 };
-
-// get all Hotels
-export const getAllHotels = async (req, res, next) => {
+export const getHotels = async (req, res, next) => {
   try {
-    const { min, max, ...others } = req.query;
-    const limit = Number(req.query.limit) || 1;
-
+    const limit = Number(req.query.limit) || 10;
     const hotels = await Hotel.find({ featured: req.query.featured }).limit(
       limit
     );
     res.status(200).json(hotels);
-    console.log(hotels);
   } catch (err) {
     next(err);
   }
 };
-
 export const countByCity = async (req, res, next) => {
-  const cities = req.query.cities.split(",");
-
-  try {
-    const list = await Promise.all(
-      cities.map((city) => {
-        return Hotel.countDocuments({ city: city });
-      })
-    );
-    res.status(200).json(list);
-  } catch (error) {
-    next(error);
+  const cities = req.query.cities?.split(",");
+  if (cities) {
+    try {
+      const list = await Promise.all(
+        cities?.map((city) => {
+          return Hotel.countDocuments({ city: city });
+        })
+      );
+      res.status(200).json(list);
+    } catch (err) {
+      next(err);
+    }
   }
 };
-
 export const countByType = async (req, res, next) => {
   try {
     const hotelCount = await Hotel.countDocuments({ type: "hotel" });
